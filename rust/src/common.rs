@@ -2,7 +2,7 @@ use std::cmp::PartialOrd;
 use std::env;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
-use std::iter::Sum;
+// use std::iter::Sum;
 
 pub fn read_file(file_path: &String) -> Vec<Result<String, std::io::Error>> {
     // return fs::read_to_string(file_path).expect("Should have been able to read the file");

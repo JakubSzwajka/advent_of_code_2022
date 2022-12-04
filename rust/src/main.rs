@@ -1,5 +1,3 @@
-use std::str::FromStr;
-
 pub mod common;
 
 // A - Rock --> 1
@@ -26,12 +24,26 @@ enum OpponentChoices {
     C(String),
 }
 
-#[derive(Clone)]
 enum MyChoices {
     X(String),
     Y(String),
     Z(String),
 }
+
+enum ExpectedFightResult {
+    X(String),
+    Y(String),
+    Z(String),
+}
+
+// fn get_response_for_expected_result(
+//     opponent_choose: &OpponentChoices,
+//     expected_result: &ExpectedFightResult,
+// ) -> MyChoices {
+//     return expected_result {
+//         ExpectedFightResult::
+//     };
+// }
 
 fn get_points_for_result(result: FightResult) -> u8 {
     return match result {
@@ -41,48 +53,48 @@ fn get_points_for_result(result: FightResult) -> u8 {
     };
 }
 
-fn get_points_for_my_choose(_my_choose: &MyChoices) -> u8 {
-    return match _my_choose {
-        MyChoices::X(_my_choose) => 1,
-        MyChoices::Y(_my_choose) => 2,
-        MyChoices::Z(_my_choose) => 3,
+fn get_points_for_my_choose(my_choose: &MyChoices) -> u8 {
+    return match my_choose {
+        MyChoices::X(_) => 1,
+        MyChoices::Y(_) => 2,
+        MyChoices::Z(_) => 3,
     };
 }
 
-fn get_choices(choices: Vec<&str>) -> (OpponentChoices, MyChoices) {
-    let opponent_choice = match choices[0].as_ref() {
-        "A" => OpponentChoices::A(choices[0].to_string()),
-        "B" => OpponentChoices::B(choices[0].to_string()),
-        "C" => OpponentChoices::C(choices[0].to_string()),
+fn get_opponent_choose(choose: &str) -> OpponentChoices {
+    return match choose.as_ref() {
+        "A" => OpponentChoices::A(choose.to_string()),
+        "B" => OpponentChoices::B(choose.to_string()),
+        "C" => OpponentChoices::C(choose.to_string()),
         _ => panic!(),
     };
+}
 
-    let my_choice = match choices[1].as_ref() {
-        "X" => MyChoices::X(choices[1].to_string()),
-        "Y" => MyChoices::Y(choices[1].to_string()),
-        "Z" => MyChoices::Z(choices[1].to_string()),
+fn get_my_choose(choose: &str) -> MyChoices {
+    return match choose.as_ref() {
+        "X" => MyChoices::X(choose.to_string()),
+        "Y" => MyChoices::Y(choose.to_string()),
+        "Z" => MyChoices::Z(choose.to_string()),
         _ => panic!(),
     };
-
-    return (opponent_choice, my_choice);
 }
 
 fn fight(opponent_choose: &OpponentChoices, my_choose: &MyChoices) -> u8 {
     let fight_result: FightResult = match opponent_choose {
-        OpponentChoices::A(_opponent_choose) => match my_choose {
-            MyChoices::X(my_choose) => FightResult::DRAW,
-            MyChoices::Y(my_choose) => FightResult::WIN,
-            MyChoices::Z(my_choose) => FightResult::LOST,
+        OpponentChoices::A(_) => match my_choose {
+            MyChoices::X(_) => FightResult::DRAW,
+            MyChoices::Y(_) => FightResult::WIN,
+            MyChoices::Z(_) => FightResult::LOST,
         },
-        OpponentChoices::B(opponent_choose) => match my_choose {
-            MyChoices::X(my_choose) => FightResult::LOST,
-            MyChoices::Y(my_choose) => FightResult::DRAW,
-            MyChoices::Z(my_choose) => FightResult::WIN,
+        OpponentChoices::B(_) => match my_choose {
+            MyChoices::X(_) => FightResult::LOST,
+            MyChoices::Y(_) => FightResult::DRAW,
+            MyChoices::Z(_) => FightResult::WIN,
         },
-        OpponentChoices::C(opponent_choose) => match my_choose {
-            MyChoices::X(my_choose) => FightResult::WIN,
-            MyChoices::Y(my_choose) => FightResult::LOST,
-            MyChoices::Z(my_choose) => FightResult::DRAW,
+        OpponentChoices::C(_) => match my_choose {
+            MyChoices::X(_) => FightResult::WIN,
+            MyChoices::Y(_) => FightResult::LOST,
+            MyChoices::Z(_) => FightResult::DRAW,
         },
     };
 
@@ -101,8 +113,8 @@ fn main() {
         match row {
             Ok(n) => {
                 let pair: Vec<&str> = n.split(" ").collect();
-                let choices = get_choices(pair);
-                let result = fight(&choices.0, &choices.1);
+
+                let result = fight(&get_opponent_choose(pair[0]), &get_my_choose(pair[1]));
 
                 total_score = total_score + u64::from(result);
             }
