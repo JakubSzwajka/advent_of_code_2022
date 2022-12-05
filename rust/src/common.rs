@@ -5,14 +5,15 @@ use std::io::{BufRead, BufReader};
 // use std::iter::Sum;
 
 pub fn read_file(file_path: &String) -> Vec<Result<String, std::io::Error>> {
-    return BufReader::new(File::open(file_path).unwrap())
+    BufReader::new(File::open(file_path).unwrap())
         .lines()
-        .collect::<Vec<_>>();
+        .collect::<Vec<_>>()
 }
 
 pub fn read_args() -> Vec<String> {
-    return env::args().collect();
+    env::args().collect()
 }
+
 #[derive(Copy, Clone, PartialEq, Debug)]
 pub struct VectorInfo<T> {
     pub max: (T, usize),
