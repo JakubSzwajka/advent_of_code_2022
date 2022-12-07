@@ -1,13 +1,20 @@
 use std::cmp::PartialOrd;
 use std::env;
 use std::fs::File;
-use std::io::{BufRead, BufReader};
+use std::io::{BufRead, BufReader, Error, Read};
 // use std::iter::Sum;
 
-pub fn read_file(file_path: &String) -> Vec<Result<String, std::io::Error>> {
+pub fn read_file_old(file_path: &String) -> Vec<Result<String, std::io::Error>> {
     BufReader::new(File::open(file_path).unwrap())
         .lines()
         .collect::<Vec<_>>()
+}
+
+pub fn read_file(file_path: &String) -> Result<String, Error> {
+    let mut file = File::open(file_path)?;
+    let mut content = String::new();
+    file.read_to_string(&mut content)?;
+    Ok(content)
 }
 
 pub fn read_args() -> Vec<String> {
