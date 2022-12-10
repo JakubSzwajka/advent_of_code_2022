@@ -1,6 +1,7 @@
 from enum import Enum
 from typing import List
 from itertools import chain
+from copy import deepcopy
 
 class NodeType(Enum):
     FILE: str = "FILE"
@@ -47,7 +48,7 @@ class Node:
         big_files = []
         for name, child in self.childs.items():
             if child.type == NodeType.DIR:
-                if child.get_size() < threshold:
+                if child.get_size() > threshold:
                     big_files.append(child)
                 if child_big_files := child.get_sizes_over(threshold):
                     big_files += child_big_files
@@ -55,10 +56,25 @@ class Node:
         return big_files
     
     def __repr__(self) -> str:
-        return f"{self.type} {self.name} ({self.size})"
+        return f"{self.type} {self.name} ({self.get_size()})"
     
     def __str__(self) -> str:
-        return f"{self.type} {self.name}"
+        return f"{self.type} {self.name} ({self.get_size()})"
+
+    def __eq__(self, __o: object) -> bool:
+        return self.get_size() == __o.get_size()
+
+    def __lt__(self, __o: object) -> bool:
+        return self.get_size() == __o.get_size()
+    
+    def __gt__(self, __o: object) -> bool:
+        return self.get_size() == __o.get_size()
+    
+    def __le__(self, __o: object) -> bool:
+        return self.get_size() == __o.get_size()
+    
+    def __ge__(self, __o: object) -> bool:
+        return self.get_size() == __o.get_size()
 
 
 class DirManager:
@@ -93,24 +109,35 @@ class DirManager:
 
 def main():
     manager = DirManager()
+    
+    disc_space = 70000000
+    update_size = 30000000
 
     with open("./input.txt", "r") as input:
         commands = input.readlines()
 
     for command in commands[1:]:
-        if command.startswith("$"):
-            if "cd" in command:
-                manager.cd(command)
+        if command.startswith("$") and "cd" in command:
+            manager.cd(command)
         else:
             manager.ls(command)
 
-    # manager.root.print(dir_only=True)
+    corrupted_space = manager.root.get_size()
+    free_space = disc_space - corrupted_space
+    space_to_obtain = update_size - free_space 
+        
+    print(f"Disc space: {disc_space}")
+    print(f"Update size: {update_size}")
+    print(f"Corrupted: {corrupted_space}")
+    print(f"Free space: {free_space}")
+    print(f"Space to obtain: {space_to_obtain}")    
 
-    total_size = 0
-    for file in manager.root.get_sizes_over(100000): 
-        total_size += file.get_size()
+    smallest_to_delete = space_to_obtain * 10
+    
+    for dir in manager.root.get_sizes_over(space_to_obtain):
+        if dir.get_size( ) < smallest_to_delete:
+            smallest_to_delete = dir.get_size()
         
-    print(total_size)
-        
+    print('------------------------->', smallest_to_delete)
 if __name__ == "__main__":
     main()
