@@ -58,7 +58,7 @@ pub struct Day11Pt1;
 
 impl Solution for Day11Pt1 {
     const DAY: usize = 11;
-    const PART: usize = 2;
+    const PART: usize = 1;
 
     type TInput = Vec<MonkeyInput>;
     type TOutput = usize;
