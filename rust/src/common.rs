@@ -1,8 +1,11 @@
+use anyhow::{Context, Result};
 use std::cmp::PartialOrd;
 use std::env;
-use std::fs::File;
-use std::io::{BufRead, BufReader, Error, Read};
-// use std::iter::Sum;
+use std::io::{BufRead, BufReader, Read};
+
+use crate::solution::{Solution, SolutionInput};
+
+use std::{fmt::Debug, fs, fs::File};
 
 pub fn read_file_old(file_path: &String) -> Vec<Result<String, std::io::Error>> {
     BufReader::new(File::open(file_path).unwrap())
@@ -10,7 +13,7 @@ pub fn read_file_old(file_path: &String) -> Vec<Result<String, std::io::Error>> 
         .collect::<Vec<_>>()
 }
 
-pub fn read_file(file_path: &String) -> Result<String, Error> {
+pub fn read_file(file_path: &String) -> Result<String> {
     let mut file = File::open(file_path)?;
     let mut content = String::new();
     file.read_to_string(&mut content)?;
@@ -54,4 +57,10 @@ pub fn get_vector_info<T: Copy + PartialOrd>(vector: &[T]) -> VectorInfo<T> {
         min: (*min, min_index),
         sum: 0,
     }
+}
+
+pub fn get_input<T: Solution + ?Sized>(name: &str) -> Result<T::TInput> {
+    let file_name = format!("src/Day{}/{}", T::DAY, name);
+    let input_str = fs::read_to_string(&file_name).context(format!("reading {:?}", file_name))?;
+    T::TInput::parse(&input_str).context(format!("parsing {:?}", &file_name))
 }
