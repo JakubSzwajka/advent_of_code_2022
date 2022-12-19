@@ -39,7 +39,7 @@ impl SolutionInput for Vec<Vec<Point>> {
             .map(|(i, e)| {
                 e.iter()
                     .enumerate()
-                    .map(|(j, f)| Point::new(j, i, Some(*f)).unwrap())
+                    .map(|(j, f)| Point::new(j, i, *f).unwrap())
                     .collect::<Vec<Point>>()
             })
             .collect::<Vec<Vec<Point>>>();

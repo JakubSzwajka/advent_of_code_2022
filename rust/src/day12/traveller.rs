@@ -17,9 +17,9 @@ impl Traveller {
 
         for (_i, elem) in map.map.iter().enumerate() {
             for (_j, p) in elem.iter().enumerate() {
-                if p.is_starting_point.unwrap() {
+                if p.is_starting_point {
                     starting_point = *p;
-                } else if p.is_target_point.unwrap() {
+                } else if p.is_target_point {
                     target_point = *p;
                 }
             }
@@ -50,9 +50,8 @@ impl Traveller {
             );
 
             for s in &mut next_squares {
-                if s.is_target_point.unwrap() {
-                    // dbg!(&self.spt);
-                    return Ok(current_square.distance.unwrap());
+                if s.is_target_point {
+                    return Ok(current_square.distance);
                 } else {
                     self.spt.push(*s);
                 };

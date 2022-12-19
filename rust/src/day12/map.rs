@@ -23,7 +23,7 @@ impl Map {
             && self.map[square.y][square.x - 1] <= square + 1
             && self.map[square.y][square.x - 1].visited == false
         {
-            self.map[square.y][square.x - 1].distance = Some(square.distance.unwrap() + 1);
+            self.map[square.y][square.x - 1].distance = square.distance + 1;
             self.map[square.y][square.x - 1].visited = true;
             possible_moves.push(self.map[square.y][square.x - 1].clone());
         }
@@ -32,7 +32,7 @@ impl Map {
             && self.map[square.y][square.x + 1] <= square + 1
             && self.map[square.y][square.x + 1].visited == false
         {
-            self.map[square.y][square.x + 1].distance = Some(square.distance.unwrap() + 1);
+            self.map[square.y][square.x + 1].distance = square.distance + 1;
             self.map[square.y][square.x + 1].visited = true;
             possible_moves.push(self.map[square.y][square.x + 1].clone());
         }
@@ -41,7 +41,7 @@ impl Map {
             && self.map[square.y - 1][square.x] <= square + 1
             && self.map[square.y - 1][square.x].visited == false
         {
-            self.map[square.y - 1][square.x].distance = Some(square.distance.unwrap() + 1);
+            self.map[square.y - 1][square.x].distance = square.distance + 1;
             self.map[square.y - 1][square.x].visited = true;
             possible_moves.push(self.map[square.y - 1][square.x].clone());
         }
@@ -50,7 +50,7 @@ impl Map {
             && self.map[square.y + 1][square.x] <= square + 1
             && self.map[square.y + 1][square.x].visited == false
         {
-            self.map[square.y + 1][square.x].distance = Some(square.distance.unwrap() + 1);
+            self.map[square.y + 1][square.x].distance = square.distance + 1;
             self.map[square.y + 1][square.x].visited = true;
             possible_moves.push(self.map[square.y + 1][square.x].clone());
         }
@@ -65,7 +65,7 @@ impl fmt::Debug for Map {
         for i in &self.map {
             let row = i
                 .iter()
-                .map(|e| e.h.unwrap().to_string())
+                .map(|e| e.h.to_string())
                 .collect::<Vec<String>>()
                 .join(" ");
             writeln!(f, "{}", row)?;
