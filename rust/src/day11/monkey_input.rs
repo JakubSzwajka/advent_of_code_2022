@@ -6,8 +6,8 @@ pub struct MonkeyInput {
     pub starting_items: Vec<Num>,
     pub operation: (String, String),
     pub divisible_by: Num,
-    pub monkey_if_test_true: u32,
-    pub monkey_if_test_false: u32,
+    pub monkey_if_test_true: MonkeyName,
+    pub monkey_if_test_false: MonkeyName,
 }
 
 impl MonkeyInput {
@@ -24,10 +24,10 @@ impl MonkeyInput {
         }
     }
 
-    fn get_name(data: &str) -> String {
+    fn get_name(data: &str) -> MonkeyName {
         let mut name = data.split(" ").collect::<Vec<&str>>()[1].to_string();
         name.pop();
-        return name;
+        return name.parse().unwrap();
     }
 
     fn get_starting_items(data: &str) -> Vec<Num> {
@@ -52,7 +52,7 @@ impl MonkeyInput {
         return (operation_data[1].to_string(), operation_data[2].to_string());
     }
 
-    fn get_target_monkey(data: &str) -> u32 {
+    fn get_target_monkey(data: &str) -> MonkeyName {
         return data
             .chars()
             .map(|x| x.to_string())
