@@ -29,8 +29,6 @@ impl Solution for Day12Pt1 {
         }
 
         shortest_paths.sort();
-        dbg!(&shortest_paths);
-
         Ok(shortest_paths[0])
     }
 }
@@ -53,10 +51,7 @@ impl Solution for Day12Pt2 {
             shortest_paths.push(traveller.find_shortest_from_point(p)?);
             traveller.map.clear_visited()?;
         }
-
         shortest_paths.sort();
-        dbg!(&shortest_paths);
-
         Ok(shortest_paths[0])
     }
 }
