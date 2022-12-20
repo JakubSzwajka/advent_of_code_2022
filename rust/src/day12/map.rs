@@ -3,16 +3,65 @@ use core::fmt;
 use super::point::Point;
 use anyhow::{Ok, Result};
 
-pub type MapInput = Vec<Vec<Point>>;
+pub type MapInput = Vec<Vec<char>>;
 
 #[derive(Clone)]
 pub struct Map {
-    pub map: MapInput,
+    pub map: Vec<Vec<Point>>,
+    starting_points: Vec<Point>,
 }
 
 impl Map {
-    pub fn new(input: &MapInput) -> Result<Self> {
-        Ok(Self { map: input.clone() })
+    pub fn new<F: FnMut(char) -> bool>(input: &MapInput, start_point_rule: &mut F) -> Result<Self> {
+        let map = Self::get_map_of_points(input, start_point_rule)?;
+        let starting_points = Self::find_starting_points(&map)?;
+        Ok(Self {
+            map,
+            starting_points,
+        })
+    }
+
+    fn find_starting_points(map: &Vec<Vec<Point>>) -> Result<Vec<Point>> {
+        let mut starting_points = Vec::new();
+        for (_i, elem) in map.iter().enumerate() {
+            for (_j, p) in elem.iter().enumerate() {
+                if p.is_starting_point {
+                    starting_points.push(*p);
+                }
+            }
+        }
+
+        Ok(starting_points)
+    }
+
+    fn get_map_of_points<F: FnMut(char) -> bool>(
+        input: &MapInput,
+        start_point_rule: &mut F,
+    ) -> Result<Vec<Vec<Point>>> {
+        let map = input
+            .iter()
+            .enumerate()
+            .map(|(i, e)| {
+                e.iter()
+                    .enumerate()
+                    .map(|(j, f)| Point::new(j, i, *f, start_point_rule).unwrap())
+                    .collect::<Vec<Point>>()
+            })
+            .collect::<Vec<Vec<Point>>>();
+        Ok(map)
+    }
+
+    pub fn clear_visited(&mut self) -> Result<()> {
+        for row in self.map.iter_mut() {
+            for p in row.iter_mut() {
+                p.visited = false;
+            }
+        }
+        Ok(())
+    }
+
+    pub fn get_starting_points(&self) -> Vec<Point> {
+        self.starting_points.clone()
     }
 
     pub fn get_possible_moves(&mut self, square: Point) -> Vec<Point> {

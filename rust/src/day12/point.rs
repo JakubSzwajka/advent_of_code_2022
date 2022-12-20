@@ -4,6 +4,7 @@ use std::ops;
 
 pub const START_POS_MARK: char = 'S';
 pub const END_POS_MARK: char = 'E';
+pub const LOWEST_POS_MARK: char = 'a';
 
 #[derive(Clone, Copy)]
 pub struct Point {
@@ -17,12 +18,17 @@ pub struct Point {
 }
 
 impl Point {
-    pub fn new(x: usize, y: usize, h: char) -> Result<Self> {
+    pub fn new<F: FnMut(char) -> bool>(
+        x: usize,
+        y: usize,
+        h: char,
+        start_cond: &mut F,
+    ) -> Result<Self> {
         Ok(Point {
             x: x,
             y: y,
             h: Self::get_height(h),
-            is_starting_point: h == START_POS_MARK,
+            is_starting_point: start_cond(h),
             is_target_point: h == END_POS_MARK,
             distance: 1,
             visited: false,
@@ -42,18 +48,6 @@ impl Point {
                 }
             }
         }
-    }
-
-    pub fn empty() -> Result<Self> {
-        Ok(Point {
-            x: 0,
-            y: 0,
-            h: 0,
-            is_starting_point: false,
-            is_target_point: false,
-            distance: 0,
-            visited: false,
-        })
     }
 }
 
@@ -100,23 +94,23 @@ mod tests {
 
     #[test]
     fn test_points_are_eq() -> Result<()> {
-        let point_a = Point::new(0, 0, 'a')?;
-        let point_b = Point::new(312, 12, 'a')?;
+        let point_a = Point::new(0, 0, 'a', &mut |_| true)?;
+        let point_b = Point::new(312, 12, 'a', &mut |_| true)?;
         assert_eq!(point_a, point_b);
         Ok(())
     }
 
     #[test]
     fn test_a_point_is_grater_then_b() -> Result<()> {
-        let point_a = Point::new(1, 31, 'A')?;
-        let point_b = Point::new(312, 12, 'a')?;
+        let point_a = Point::new(1, 31, 'A', &mut |_| true)?;
+        let point_b = Point::new(312, 12, 'a', &mut |_| true)?;
         assert_eq!(true, point_a >= point_b);
         Ok(())
     }
 
     #[test]
     fn test_adding_usize_increase_h() -> Result<()> {
-        let point_a = Point::new(1, 31, 'a')?;
+        let point_a = Point::new(1, 31, 'a', &mut |_| true)?;
         let bigger_point = point_a + 100;
         assert_eq!(139, bigger_point.h);
         Ok(())
