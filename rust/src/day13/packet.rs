@@ -12,7 +12,7 @@ use std::str::FromStr;
 
 type Int = i32;
 
-#[derive(Debug, Eq)]
+#[derive(Debug, Eq, Clone)]
 pub enum Packet {
     List(Vec<Packet>),
     Int(Int),
