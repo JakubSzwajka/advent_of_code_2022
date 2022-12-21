@@ -1,4 +1,10 @@
-# Rust notes
+## [Day 13](https://adventofcode.com/2022/day/13)
+
+A few new things which was this day about:
+
+- Parsing data from string. Used `nom` crate here. Short description below at `Packet Parser`.
+- Enums and variants.
+- Comparing enums and variants with `Itertools::EitherOrBoth`.
 
 ## Enums
 
@@ -43,6 +49,6 @@ The parse function is the main entry point for parsing packets, and it uses the 
 
 The `parse_int` function uses the `map` combinator to convert the result of parsing a string of digits into an Int value, and then wraps it in a `Packet::Int` variant. The `parse_list` function uses the delimited and `separated_list0` combinators to parse a list of packets surrounded by square brackets and separated by commas. It then wraps the resulting list of packets in a `Packet::List` variant.
 
-The `parse_int` function uses several combinators from the nom crate to parse the input string. The digit1 combinator parses a string of one or more digits, and the map_res combinator applies a function to the resulting string to convert it into a numeric value. In this case, the function passed to map_res is |s: &str| s.parse(), which parses the string as a number of the type specified in the Int alias (i32 in this case).
+The digit1 combinator parses a string of one or more digits, and the map_res combinator applies a function to the resulting string to convert it into a numeric value. In this case, the function passed to map_res is |s: &str| s.parse(), which parses the string as a number of the type specified in the Int alias (i32 in this case).
 
 The `IResult` type is an alias for a result type that is returned by the parsing functions. It indicates whether the parsing was successful and, if so, gives the remaining input and the parsed value.
