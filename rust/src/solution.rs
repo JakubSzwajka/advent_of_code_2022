@@ -21,7 +21,7 @@ pub trait Solution {
     }
 
     fn run() -> Result<()> {
-        let input = get_input::<Self>("input.txt")?;
+        let input = get_input::<Self>("test.txt")?;
         let output =
             Self::solve(&input).context(format!("Day {}, Part {}", Self::DAY, Self::PART))?;
         println!("Day {} Part {} result: ", Self::DAY, Self::PART);

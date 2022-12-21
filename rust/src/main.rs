@@ -13,10 +13,10 @@ use day12::{Day12Pt1, Day12Pt2};
 use day13::Day13Pt1;
 
 fn main() -> Result<()> {
-    Day11Pt1::run()?;
-    Day11Pt2::run()?;
-    Day12Pt1::run()?;
-    Day12Pt2::run()?;
+    // Day11Pt1::run()?;
+    // Day11Pt2::run()?;
+    // Day12Pt1::run()?;
+    // Day12Pt2::run()?;
     Day13Pt1::run()?;
     Ok(())
 }
