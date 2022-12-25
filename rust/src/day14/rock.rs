@@ -1,26 +1,26 @@
 use anyhow::Result;
 use itertools::Itertools;
 
-use super::point::Point;
+use crate::xlib::point::Point;
 
 pub const ROCK_SIGN: char = '#';
 
 #[derive(Debug, Clone)]
 pub struct Rock {
-    line: Vec<Point>,
+    line: Vec<Point<isize>>,
 }
 
 impl Rock {
     pub fn new(data: &str) -> Self {
         let points = data
             .split("->")
-            .map(|x| x.parse::<Point>().unwrap())
+            .map(|x| x.parse::<Point<isize>>().unwrap())
             .collect_vec();
         Self { line: points }
     }
 
-    pub fn get_rock_coordinates(&self) -> Result<Vec<Point>> {
-        let mut rock_coordinates: Vec<Point> = Vec::new();
+    pub fn get_rock_coordinates(&self) -> Result<Vec<Point<isize>>> {
+        let mut rock_coordinates: Vec<Point<isize>> = Vec::new();
 
         for i in 0..self.line.len() - 1 {
             let start_point = &self.line[i];

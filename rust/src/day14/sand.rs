@@ -4,8 +4,8 @@ use super::map::{Map, AIR_SIGN};
 
 pub struct Sand {
     map: Map,
-    pub x: usize,
-    pub y: usize,
+    pub x: isize,
+    pub y: isize,
 }
 
 impl Sand {
@@ -45,19 +45,19 @@ impl Sand {
     }
 
     fn is_endless_void_reached(&self) -> Result<bool> {
-        Ok(self.y == self.map.body.len() - 2)
+        Ok(self.y as usize == self.map.body.len() - 2)
     }
 
     fn can_fall_down(&self) -> Result<bool> {
-        Ok(self.map.body[self.y + 1][self.x] == AIR_SIGN)
+        Ok(self.map.body[(self.y + 1) as usize][self.x as usize] == AIR_SIGN)
     }
 
     fn can_fall_down_left(&self) -> Result<bool> {
-        Ok(self.map.body[self.y + 1][self.x - 1] == AIR_SIGN)
+        Ok(self.map.body[(self.y + 1) as usize][(self.x - 1) as usize] == AIR_SIGN)
     }
 
     fn can_fall_down_right(&self) -> Result<bool> {
-        Ok(self.map.body[self.y + 1][self.x + 1] == AIR_SIGN)
+        Ok(self.map.body[(self.y + 1) as usize][(self.x + 1) as usize] == AIR_SIGN)
     }
 
     fn fall_down(&mut self) -> Result<()> {

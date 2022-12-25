@@ -1,5 +1,4 @@
 mod map;
-mod point;
 mod rock;
 mod sand;
 use crate::solution::{Solution, SolutionInput};

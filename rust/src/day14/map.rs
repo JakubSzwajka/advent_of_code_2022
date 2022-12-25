@@ -1,11 +1,11 @@
+use crate::xlib::point::Point;
+
 use super::{
-    point::Point,
     rock::{Rock, ROCK_SIGN},
     sand::Sand,
 };
 use anyhow::{bail, Result};
 use core::fmt;
-
 pub const MAP_SIZE_OFFSET: usize = 480;
 pub const AIR_SIGN: char = '.';
 pub const SAND_SIGN: char = 'O';
@@ -15,15 +15,15 @@ const ENTRANCE_SIGN: char = '+';
 #[derive(Clone)]
 pub struct Map {
     pub body: Vec<Vec<char>>,
-    pub entrance: Point,
-    lowest_rock_y: usize,
+    pub entrance: Point<isize>,
+    lowest_rock_y: isize,
 }
 
 impl Map {
     pub fn new() -> Self {
         let mut map = vec![vec![AIR_SIGN; MAP_SIZE]; MAP_SIZE / 2];
-        let entrance = Point::new(500, 0);
-        map[entrance.y][entrance.x] = ENTRANCE_SIGN;
+        let entrance = Point::new(500 as isize, 0);
+        map[entrance.y as usize][entrance.x as usize] = ENTRANCE_SIGN;
         Self {
             body: map,
             entrance: entrance,
@@ -33,7 +33,7 @@ impl Map {
 
     pub fn add_rock(&mut self, rock: Rock) -> Result<()> {
         for p in rock.get_rock_coordinates()? {
-            self.body[p.y][p.x] = ROCK_SIGN;
+            self.body[p.y as usize][p.x as usize] = ROCK_SIGN;
             self.update_lowest_rock(&p)?;
         }
         Ok(())
@@ -48,11 +48,11 @@ impl Map {
     }
 
     pub fn add_sand(&mut self, sand: &Sand) -> Result<()> {
-        self.body[sand.y][sand.x] = SAND_SIGN;
+        self.body[sand.y as usize][sand.x as usize] = SAND_SIGN;
         Ok(())
     }
 
-    fn update_lowest_rock(&mut self, rock: &Point) -> Result<()> {
+    fn update_lowest_rock(&mut self, rock: &Point<isize>) -> Result<()> {
         if self.lowest_rock_y < rock.y {
             self.lowest_rock_y = rock.y;
         }
@@ -60,14 +60,14 @@ impl Map {
     }
 
     pub fn add_floor(&mut self) -> Result<()> {
-        for p in &mut self.body[self.lowest_rock_y + 2] {
+        for p in &mut self.body[(self.lowest_rock_y + 2) as usize] {
             *p = ROCK_SIGN;
         }
         Ok(())
     }
 
     pub fn is_entrance_blocked(&self) -> bool {
-        self.body[self.entrance.y][self.entrance.x] == SAND_SIGN
+        self.body[self.entrance.y as usize][self.entrance.x as usize] == SAND_SIGN
     }
 }
 
