@@ -73,9 +73,9 @@ where
     }
 }
 
-impl<T: Num + Ord + AddAssign + Copy + PrimInt + Signed> PartialEq for Point<T> {
+impl<T: Num + Ord + AddAssign + Copy + PrimInt + Signed + Debug> PartialEq for Point<T> {
     fn eq(&self, other: &Self) -> bool {
-        self.x == other.x && self.y == self.y
+        self.x == other.x && self.y == other.y
     }
 }
 
@@ -108,6 +108,8 @@ where
 
 #[cfg(test)]
 mod tests {
+    use std::vec;
+
     use super::*;
 
     #[test]
@@ -116,7 +118,7 @@ mod tests {
         assert_eq!(p, Point::new(123, 321));
         let p: Point<isize> = "2,18".parse().unwrap();
         assert_eq!(p, Point::new(2, 18));
-        let p: Point<isize> = "-2,15".parse().unwrap();
+        let p: Point<isize> = "-2,18".parse().unwrap();
         assert_eq!(p, Point::new(-2, 18));
         Ok(())
     }
@@ -155,6 +157,17 @@ mod tests {
         let a = Point::new(1, 1);
         let b = Point::new(3, 3);
         assert_eq!(a.get_manhattan_distance_to(&b)?, 4);
+        Ok(())
+    }
+
+    #[test]
+    fn test_points_are_eq() -> Result<()> {
+        let a = Point::new(1, 3);
+        let b = Point::new(1, 3);
+        assert_eq!(a, b);
+
+        let vector = vec![Point::new(123, 321)];
+        assert!(vector.contains(&Point::new(123, 321)));
         Ok(())
     }
 }

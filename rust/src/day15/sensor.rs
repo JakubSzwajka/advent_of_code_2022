@@ -22,6 +22,54 @@ impl Sensor {
         Ok(self.coordinates.get_manhattan_distance_to(&self.beacon)?
             >= self.coordinates.get_manhattan_distance_to(p)?)
     }
+
+    pub fn get_adjacent(&self) -> Result<Vec<Point<isize>>> {
+        let mut res: Vec<Point<isize>> = Vec::new();
+        let r = self.coordinates.get_manhattan_distance_to(&self.beacon)? + 1;
+
+        let x = self.coordinates.x;
+        let y = self.coordinates.y;
+        let mut x_offsize = 0;
+        let mut y_offsize = 0;
+
+        // left to top
+        while x - r + x_offsize != self.coordinates.x {
+            res.push(Point::new(x - r + x_offsize, y + y_offsize));
+            x_offsize += 1;
+            y_offsize -= 1;
+        }
+        // top to right
+        x_offsize = 0;
+        y_offsize = 0;
+
+        while x + x_offsize != self.coordinates.x + r {
+            res.push(Point::new(x + x_offsize, y - r + y_offsize));
+            x_offsize += 1;
+            y_offsize += 1;
+        }
+
+        // right to bottom
+        x_offsize = 0;
+        y_offsize = 0;
+
+        while x + r + x_offsize != self.coordinates.x {
+            res.push(Point::new(x + r + x_offsize, y + y_offsize));
+            x_offsize -= 1;
+            y_offsize += 1;
+        }
+
+        // right to left
+        x_offsize = 0;
+        y_offsize = 0;
+
+        while x + x_offsize > self.coordinates.x - r {
+            res.push(Point::new(x + x_offsize, y + r + y_offsize));
+            x_offsize -= 1;
+            y_offsize -= 1;
+        }
+
+        Ok(res)
+    }
 }
 
 impl FromStr for Sensor {
@@ -70,6 +118,24 @@ mod tests {
         assert!(s.does_contain(&"5,9".parse::<Point<TPoint>>()?)?);
         assert!(!s.does_contain(&"8,17".parse::<Point<TPoint>>()?)?);
         assert!(!s.does_contain(&"2,11".parse::<Point<TPoint>>()?)?);
+        Ok(())
+    }
+
+    #[test]
+    fn test_adjacent_points() -> Result<()> {
+        let s: Sensor = "Sensor at x=12, y=2: closest beacon is at x=12, y=3".parse()?;
+        let adjacent = s.get_adjacent()?;
+        // dbg!(&adjacent);
+
+        assert_eq!(adjacent.len(), 8);
+        assert!(adjacent.contains(&Point::new(10, 2)));
+        assert!(adjacent.contains(&Point::new(11, 1)));
+        assert!(adjacent.contains(&Point::new(12, 0)));
+        assert!(adjacent.contains(&Point::new(13, 1)));
+        assert!(adjacent.contains(&Point::new(14, 2)));
+        assert!(adjacent.contains(&Point::new(13, 3)));
+        assert!(adjacent.contains(&Point::new(12, 4)));
+        assert!(adjacent.contains(&Point::new(11, 3)));
         Ok(())
     }
 }

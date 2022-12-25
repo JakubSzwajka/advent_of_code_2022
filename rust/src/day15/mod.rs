@@ -47,70 +47,41 @@ impl Solution for Day15Pt2 {
     type TOutput = usize;
 
     fn solve(input: &Self::TInput) -> Result<Self::TOutput> {
-        fn search_row(
-            sensors: &Vec<Sensor>,
-            beacons: &Vec<Point<isize>>,
-            y_index: isize,
-            offset: isize,
-        ) -> Option<Point<isize>> {
-            for i in 0..(y_index * 2) + 1 {
-                let mut new_beacon_found = true;
-                let mut beacon: Option<Point<isize>> = None;
-                let p = Point::new(i, y_index + offset);
-                // println!("Checking: {}/{}", p.x, p.y);
-                if !beacons.contains(&p) {
-                    for (_i, s) in sensors.iter().enumerate() {
-                        if !s.does_contain(&p).unwrap() {
-                            // println!(
-                            //     "{} - Not found in S({}/{})",
-                            //     _i, s.coordinates.x, s.coordinates.y
-                            // );
-                            beacon = Some(p.clone());
-                        } else {
-                            new_beacon_found = false;
-                            // println!("--> Found in S({}/{})", s.coordinates.x, s.coordinates.y,);
-                            break;
-                        }
-                    }
-                    if new_beacon_found {
-                        return beacon;
-                    }
-                }
-            }
-            return None;
-        }
-
         fn calculate_tuning_frequency(p: &Point<isize>) -> Result<usize> {
             Ok(p.x as usize * 4000000 + p.y as usize)
         }
 
-        let y_index: isize = 2000000;
-        // let y_index: isize = 10;
+        let y_index: isize = 4000000;
+        // let y_index: isize = 20;
 
-        let range = MyRange::new(y_index);
-
-        let beacons = input
+        let candidates = input
             .iter()
-            .map(|x| x.beacon.clone())
-            .collect::<Vec<Point<isize>>>();
-        let mut closest_beacon: Point<isize> = "0,0".parse().unwrap();
+            .map(|x| {
+                x.get_adjacent()
+                    .unwrap()
+                    .into_iter()
+                    .filter(|p| p.x > 0 && p.x <= y_index && p.y > 0 && p.y <= y_index)
+                    .collect()
+            })
+            .collect::<Vec<Vec<Point<isize>>>>()
+            .concat();
 
-        println!("Checking!");
-        for i in range {
-            println!("Checking row {}/{}", i, (y_index * 2) + 1);
-            match search_row(&input, &beacons, y_index as isize, i as isize) {
-                Some(p) => {
-                    if (y_index - p.y).abs() < (y_index - closest_beacon.y).abs() {
-                        closest_beacon = p;
-                    }
+        for (i, p) in candidates.iter().enumerate() {
+            println!("Candidate {}/{}", i, candidates.len());
+            let mut does_contain = false;
+
+            for sensor in input {
+                if sensor.does_contain(&p)? {
+                    does_contain = true;
+                    break;
                 }
-                None => {}
+            }
+            if !does_contain {
+                println!("Found beacon: ({},{})", p.x, p.y);
+                return Ok(calculate_tuning_frequency(&p)?);
             }
         }
-
-        // dbg!(&closest_beacon);
-        Ok(calculate_tuning_frequency(&closest_beacon)?)
-        // Ok(1)
+        Ok(1)
     }
 }
 
@@ -136,64 +107,15 @@ mod tests {
         static ref INPUT_MAIN: Vec<Sensor> = get_input::<Day15Pt1>("input.txt").unwrap();
     }
 
-    // #[test]
-    // fn test_part1_test() -> Result<()> {
-    //     assert_eq!(26, Day15Pt1::solve(&INPUT_TEST)?);
-    //     Ok(())
-    // }
-
     #[test]
     fn test_part1_result() -> Result<()> {
         assert_eq!(4811413, Day15Pt1::solve(&INPUT_MAIN)?);
         Ok(())
     }
 
-    // #[test]
-    // fn test_part2_test() -> Result<()> {
-    //     assert_eq!(56000011, Day15Pt2::solve(&INPUT_TEST)?);
-    //     Ok(())
-    // }
-
-    // #[test]
-    // fn test_part2_result() -> Result<()> {
-    //     assert_eq!(332, Day15Pt2::solve(&INPUT_MAIN)?);
-    //     Ok(())
-    // }
-}
-
-#[derive(Debug)]
-struct MyRange {
-    start: isize,
-    offset: isize,
-    direction: bool, // true for higher / false for lower ( to 0 )
-}
-
-impl MyRange {
-    fn new(start: isize) -> MyRange {
-        MyRange {
-            start,
-            offset: 1,
-            direction: true,
-        }
-    }
-}
-
-impl Iterator for MyRange {
-    type Item = isize;
-    fn next(&mut self) -> Option<Self::Item> {
-        if self.offset >= self.start {
-            None
-        } else {
-            if self.direction {
-                let result = self.start + self.offset;
-                self.direction = false;
-                Some(result)
-            } else {
-                let result = self.start - self.offset;
-                self.direction = true;
-                self.offset += 1;
-                Some(result)
-            }
-        }
+    #[test]
+    fn test_part2_result() -> Result<()> {
+        assert_eq!(13171855019123, Day15Pt2::solve(&INPUT_MAIN)?);
+        Ok(())
     }
 }
